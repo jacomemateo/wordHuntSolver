@@ -1,5 +1,7 @@
 # Raspberry Pi Bluetooth Mouse Emulator for Word Hunt Solving (WHS)
 
+This some nerd shit I swear i get bitches... 😭😭😭😭
+
 ## Description:
 The Raspberry Pi Bluetooth Mouse Emulator for Word Hunt Solving (WHS) project aims to develop a system utilizing a Raspberry Pi to emulate a mouse pointer. This system will connect to an iPhone via Bluetooth using the accessibility touch option in settings. The implementation will be done primarily in the Rust programming language. The ultimate goal is to create a program capable of solving word hunts in iMessage games, specifically the Word Hunt game.
 
