@@ -1,24 +1,22 @@
-use std::{error::Error, future::pending};
-use std::fmt::DebugList;
-use async_std::task;
-
-use zbus::Connection;
+use std::error::Error; 
+use zbus::{Connection, zvariant::Value, Proxy};
 
 #[async_std::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let bus = Connection::system().await.unwrap();
+    let conn = Connection::system().await.unwrap();
     
-    let out = bus.call_method(
-        Some("org.freedesktop.hostname1"),
+    let proxy= Proxy::new(
+        &conn,
+        "org.freedesktop.hostname1",
         "/org/freedesktop/hostname1",
-        Some("org.freedesktop.DBus.Properties"),
-        "Get",
-        &("org.freedesktop.hostname1", "Hostname")
-    ).await?.body();
-        
-    let body: &str = out.().deserialize().unwrap();
+        "org.freedesktop.DBus.Properties"
+    ).await?;        
 
-    println!("{}", body);
+
+    let body= proxy.call_method("Get", &("org.freedesktop.hostname1", "Hostname") ).await?.body();
+    let body: Value = body.deserialize()?;        
+
+    println!("The hostname is {}", body);
 
     Ok(())
 }
