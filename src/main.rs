@@ -1,22 +1,33 @@
-use std::error::Error; 
-use zbus::{Connection, zvariant::Value, Proxy};
+use std::sync::Arc;
+use tokio::runtime::Runtime;
+use zbus::{Connection, ProxyBuilder, Proxy};
 
-#[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    let conn = Connection::system().await.unwrap();
-    
-    let proxy= Proxy::new(
-        &conn,
-        "org.freedesktop.hostname1",
-        "/org/freedesktop/hostname1",
-        "org.freedesktop.DBus.Properties"
-    ).await?;        
+#[tokio::main]
+async fn main() -> Result<(), zbus::Error> {
+    // Connect to the system bus
+    let connection = Connection::system().await?;
 
+    // Create a proxy builder for the signal interface
+    let proxy_builder = ProxyBuilder::new(&connection)
+        .destination("com.example.greeting")?
+        .path("/")?
+        .interface("com.example.greeting.GreetingSignal")?;
 
-    let body= proxy.call_method("Get", &("org.freedesktop.hostname1", "Hostname") ).await?.body();
-    let body: Value = body.deserialize()?;        
+    // Create a proxy for receiving signals
+    let proxy: Proxy<'_> = proxy_builder.build().await?;
 
-    println!("The hostname is {}", body);
+    // Subscribe to signals
+    //proxy.subscribe().await?;
 
-    Ok(())
+    // Receive signals in a loop
+    loop {
+        // Wait for a signal
+        let signal = proxy.receive_signal("GreetingSignal").await?;
+
+        // Extract the string parameter from the signal
+        let greeting: String = signal.body()?;
+
+        // Print the received greeting
+        println!("Received greeting: {}", greeting);
+    }
 }
