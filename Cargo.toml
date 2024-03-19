@@ -9,3 +9,5 @@ edition = "2021"
 dbus = "0.9.7"
 dbus-codegen = "0.11.0"
 dbus-tokio = "0.7.6"
+dbus-crossroads = "0.5.2"
+tokio = { version="1.36.0", features = ["macros", "sync", "rt-multi-thread"] }
