@@ -1,19 +1,22 @@
-use tokio;
-use dbus_tokio::connection;
-use dbus_crossroads::Crossroads;
+use dbus::{blocking::Connection, Error};
+use std::time::Duration;
+mod bluez_constants;
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (resource, conn) = connection::new_system_sync().expect("D-Bus connection failed");
+fn discover_device(connection: &dbus::blocking::Connection) {
+    let adapter_path = format!("{}{}", bluez_constants::BLUEZ_NAMESPACE, bluez_constants::ADAPTER_NAME);
 
-    let _handle = tokio::spawn(async {
-        let err = resource.await;
-        panic!("Lost connection to D-Bus: {}", err);
-    });
+    println!("{}", adapter_path);
 
-    conn.request_name("com.example.dbustest", false, true, false).await?;
+    let adapter_object = connection.with_proxy(bluez_constants::BLUEZ_SERVICE_NAME, adapter_path, Duration::from_millis(5000));
 
-    let mut cr = Crossroads::new();
+    
+}
 
-    Ok(())
+fn main() {
+    let connection = match Connection::new_system() {
+        Ok(conn) => conn,
+        Err(err) => panic!("Error: {}", err)   
+    };
+
+    discover_device(&connection);
 }
