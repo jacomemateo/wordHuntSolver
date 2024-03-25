@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dbus = "0.9.7"
-dbus-codegen = "0.11.0"
-dbus-tokio = "0.7.6"
-dbus-crossroads = "0.5.2"
-tokio = { version="1.36.0", features = ["macros", "sync", "rt-multi-thread"] }
+bluer = { version = "0.17.1", features = ["bluetoothd", "l2cap"] }
+tokio = { version = "1.36.0", features = ["full"] }
+env_logger = "0.11.3"
+uuid = "1.8.0"
+futures = "0.3"
